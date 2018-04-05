@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script language="JavaScript" src="game_logic.js"></script>
-    <script language="JavaScript" src="jsbridge.js"></script>
+   <script language="JavaScript" >
+        __browserMsg.send(JSON.stringify(
+            {
+                business:"pay", //不能修改
+                code:1,
+                message:"pay ok"
+            }
+        ),'sc.web_callback_game.local');
+    </script>
     <meta charset="UTF-8">
     <title>厘米游戏H5调试</title>
 </head>
-<body onpageshow="getGameName(2003)">
+<body>
 
-<p id="demo">A Paragraph.</p>
+<p id="demo">Test</p>
 
 </body>
 </html>
