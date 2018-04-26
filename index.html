@@ -1,34 +1,116 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<meta name="description" content="A simple HTML5 Template">
-<meta name="author" content="dron">
-<meta name="viewport" content="width=device-width, height=device-height, user-scalable=no, initial-scale=1.0, maximum-scale=1.0">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<link rel="shortcut icon" href="/favicon.ico">
-<link rel="stylesheet" href="images/index.css">
-<title>水果忍者HTML5网页版在线游戏</title>
-<!--[if lt IE 9]><script>document.createElement("canvas");</script><![endif]-->
-</head>
-<body>
-<div id="extra"></div>
-<em> -- Fruit Ninja -- </em>
-<em> The game is developed by the Baidu JS team, </em>
-<em> we provide the source in git: https://github.com/ChineseDron/fruit-ninja </em>
-<em> follow me on weibo http://weibo.com/baidujs </em>
-<em> or learn more, to see http://tangram.baidu.com </em>
-<canvas id="view" width="640" height="480"></canvas>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <script src="qqPlayCore.js?_gameid=2014"></script>
+        <script type="text/javascript">
+            var openid = "";
+            function onGetUserIcon(data) {
+                BK.Script.log(0,0,"onGetUserIcon "+data);
+                document.getElementById("user_icon").src="data:image/png;base64,"+data;
+            }
+            function onGetUserNick(data) {
+                BK.Script.log(0,0,"onGetUserNick "+data);
+                document.getElementById("user_name").innerHTML=data;
+            }
+            function onGetGameInfo(data) {
+                document.getElementById("game_info").innerHTML=data;
+                var o = JSON.parse(data);
+                openid = o.openId;
+                BK.Script.log(0,0,"webopenid:"+openid);
+            }
 
-<div id="desc">
-<div style="text-align:center;clear:both;">
-<script src="/gg_bd_ad_720x90.js" type="text/javascript"></script>
-<script src="/follow.js" type="text/javascript"></script>
-</div>
-	<div>水果忍者网页版，由<a href="http://weibo.com/baidujs" target="_blank">百度 JS 小组</a>倾情提供</div>
-	<div id="browser"></div>
-</div>
-<script src="scripts/all.js"></script>
-</body>
+            function getUserName() {
+                BK.MQQ.Account.getNick(openid,function(openId,nickname){
+                    if (openId == openid) {
+                        BK.Script.log(0,0,"nickname:" + nickname);
+                        onGetUserNick(nickname);
+                    }
+                }); 
+            }
+            
+            
+            function getUserIcon() {
+                BK.MQQ.Account.getHead(openid,function(openId,avatar){
+                    if (openId == openid) {
+                        BK.Script.log(0,0,"avatar:" + avatar);
+                        onGetUserIcon(avatar);
+                    }
+                }); 
+            }
+            
+            function cmcallBack (errCode, cmd, data) {
+                BK.Script.log(0,0,"errCode:" + errCode + " cmd:" + cmd + " data:" + data);
+            }
+
+            var game = new window.Game(
+                {
+                    onInitGlobalVar: function (data) {
+                        BK.Script.log(0, 0, "onInitGlobal + data" + data);
+                        openid = data.openId;
+                        onGetGameInfo(JSON.stringify(data))
+                        GameStatusInfo = data;
+                        GameStatusInfo.gameId = 2003;
+                        // getUserName()
+                        getUserIcon()
+                        // var data = {cmd:'apollo_aio_game.get_playing_usernum',from:'ios',gameId:2003};
+
+                        // BK.MQQ.SsoRequest.send(data,"apollo_aio_game.get_playing_usernum",cmcallBack)
+                        // __browserMsg.send(JSON.stringify({cmd:'apollo_aio_game.get_playing_usernum',data:{cmd:'apollo_aio_game.get_playing_usernum',from:'android.aio',gameId:'2003'}}),'cs.ssoMessage.local');
+                        BK.QQ.getRankList(function (errCode, cmd, data) {
+                            BK.Script.log(1, 1, "getRankList demo callback  cmd" + cmd + " errCode:" + errCode + "  data:" + JSON.stringify(data));
+                            // if(data)
+                            // {
+                                BK.Script.log(1, 1,"  data:" + data);
+                                BK.Script.log(1, 1,"  data:" + data.data);
+                                BK.Script.log(1, 1,"  data:" + data.data.data.rankList);
+                                var rankList = data.data.data.rankList;
+                                for(var i=0;i<rankList.length;i++){
+                                        var rankNode = rankList[i];
+                                    BK.Script.log(1, 1, "rankList i:" + i + 
+                                    " nick:" + rankNode.nick +  //昵称
+                                    "  head:" + rankNode.head + //头像url
+                                    " accPoint:"+rankNode.busData.accPoint) //积分
+                                }
+                            // }
+                        });
+                    },
+                    
+                    onShare: function (app) {
+                        BK.Script.log(0, 0, "onShare");
+                        return{
+                                title:"厘米游戏",
+                                summary:"一起来玩厘米游戏",
+                                detail:"http://www.qq.com",
+                                picUrl:"http://mat1.gtimg.com/ipad/qq_time/imgs/20180321_chunfen.jpg",
+                                gameVersion:"25",
+                                gameId:2245,
+                                roomId:0,
+                                isSelectFriend:1,
+                                extendInfo:JSON.stringify({"a":123,"b":"123"})
+                            };
+                    },
+                }
+            )
+	    __browserMsg.send(JSON.stringify(
+  {
+        business:"pay", //不能修改
+        code:1,
+        message:"ok"
+    }
+
+  ),'sc.web_callback_game.local');
+        </script>
+        <title>测试 Demo</title>
+    </head>
+    <body>
+        <p style="font-size:160%;" id="user_name">33333</p>
+        <button style="font-size:160%;" onclick="getUserName()">获取用户名</button>
+        <p style="font-size:160%;" id="user_name">用户名字</p>
+        <button style="font-size:160%;" onclick="getUserIcon()">获取用户头像</button>
+        <img id="user_icon" src="index.html">
+        <p style="font-size:160%;" id="game_info">游戏信息</p>
+
+    </body>
+
 </html>
