@@ -2,96 +2,9 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <script src="qqPlayCore.js?_gameid=2014"></script>
+   
         <script type="text/javascript">
-            var openid = "";
-            function onGetUserIcon(data) {
-                BK.Script.log(0,0,"onGetUserIcon "+data);
-                document.getElementById("user_icon").src="data:image/png;base64,"+data;
-            }
-            function onGetUserNick(data) {
-                BK.Script.log(0,0,"onGetUserNick "+data);
-                document.getElementById("user_name").innerHTML=data;
-            }
-            function onGetGameInfo(data) {
-                document.getElementById("game_info").innerHTML=data;
-                var o = JSON.parse(data);
-                openid = o.openId;
-                BK.Script.log(0,0,"webopenid:"+openid);
-            }
-
-            function getUserName() {
-                BK.MQQ.Account.getNick(openid,function(openId,nickname){
-                    if (openId == openid) {
-                        BK.Script.log(0,0,"nickname:" + nickname);
-                        onGetUserNick(nickname);
-                    }
-                }); 
-            }
-            
-            
-            function getUserIcon() {
-                BK.MQQ.Account.getHead(openid,function(openId,avatar){
-                    if (openId == openid) {
-                        BK.Script.log(0,0,"avatar:" + avatar);
-                        onGetUserIcon(avatar);
-                    }
-                }); 
-            }
-            
-            function cmcallBack (errCode, cmd, data) {
-                BK.Script.log(0,0,"errCode:" + errCode + " cmd:" + cmd + " data:" + data);
-            }
-
-            var game = new window.Game(
-                {
-                    onInitGlobalVar: function (data) {
-                        BK.Script.log(0, 0, "onInitGlobal + data" + data);
-                        openid = data.openId;
-                        onGetGameInfo(JSON.stringify(data))
-                        GameStatusInfo = data;
-                        GameStatusInfo.gameId = 2003;
-                        // getUserName()
-                        getUserIcon()
-                        // var data = {cmd:'apollo_aio_game.get_playing_usernum',from:'ios',gameId:2003};
-
-                        // BK.MQQ.SsoRequest.send(data,"apollo_aio_game.get_playing_usernum",cmcallBack)
-                        // __browserMsg.send(JSON.stringify({cmd:'apollo_aio_game.get_playing_usernum',data:{cmd:'apollo_aio_game.get_playing_usernum',from:'android.aio',gameId:'2003'}}),'cs.ssoMessage.local');
-                        BK.QQ.getRankList(function (errCode, cmd, data) {
-                            BK.Script.log(1, 1, "getRankList demo callback  cmd" + cmd + " errCode:" + errCode + "  data:" + JSON.stringify(data));
-                            // if(data)
-                            // {
-                                BK.Script.log(1, 1,"  data:" + data);
-                                BK.Script.log(1, 1,"  data:" + data.data);
-                                BK.Script.log(1, 1,"  data:" + data.data.data.rankList);
-                                var rankList = data.data.data.rankList;
-                                for(var i=0;i<rankList.length;i++){
-                                        var rankNode = rankList[i];
-                                    BK.Script.log(1, 1, "rankList i:" + i + 
-                                    " nick:" + rankNode.nick +  //昵称
-                                    "  head:" + rankNode.head + //头像url
-                                    " accPoint:"+rankNode.busData.accPoint) //积分
-                                }
-                            // }
-                        });
-                    },
-                    
-                    onShare: function (app) {
-                        BK.Script.log(0, 0, "onShare");
-                        return{
-                                title:"厘米游戏",
-                                summary:"一起来玩厘米游戏",
-                                detail:"http://www.qq.com",
-                                picUrl:"http://mat1.gtimg.com/ipad/qq_time/imgs/20180321_chunfen.jpg",
-                                gameVersion:"25",
-                                gameId:2245,
-                                roomId:0,
-                                isSelectFriend:1,
-                                extendInfo:JSON.stringify({"a":123,"b":"123"})
-                            };
-                    },
-                }
-            )
+          
 	    __browserMsg.send(JSON.stringify(
   {
         business:"pay", //不能修改
