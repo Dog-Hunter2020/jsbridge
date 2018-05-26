@@ -1,11 +1,310 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-   
+        <!-- gameid 离线模式需要和研发的游戏一样，在线模式不需要带 gameid 参数 -->
+        <script src="qqPlayCore.js?_gameid=2014"></script>
         <script type="text/javascript">
-          
-	    __browserMsg.send(JSON.stringify(
+
+            var openid = "";
+
+            // 获取 昵称 示例
+            function getUserName() {
+                BK.MQQ.Account.getNick(openid,function(openId,nickname){
+                    if (openId == openid) {
+                        BK.Script.log(0,0,"nickname:" + nickname);
+                        document.getElementById("user_name").innerHTML = nickname;
+                    }
+                }); 
+            }
+            
+            // 获取 头像  示例 （avatar 是 base64 编码的图片）
+            function getUserIcon() {
+                BK.MQQ.Account.getHead(openid,function(openId,avatar){
+                    if (openId == openid) {
+                        BK.Script.log(0,0,"avatar:" + avatar);
+                        document.getElementById("user_icon").src="data:image/png;base64," + avatar;
+                    }
+                }); 
+            }
+
+            // 获取 openKey 示例
+            function getOpenKey() {
+                BK.QQ.fetchOpenKey(function (errCode, cmd, data) {
+                    if (errCode == 0) {
+                        var openKey = data.openKey;
+                        BK.Script.log(0,0,"openKey:" + openKey);
+                        document.getElementById("user_OpenKey").innerHTML = openKey;
+                    }
+                });
+            }
+
+            // 分享到 QQ
+            function shareToMQQ() {
+                BK.QQ.shareToMQQ("迪斯尼过马路战绩","我获得了第1名，快来挑战我","www.qq.com","xxx.com/xx.png");
+            }
+
+            function shareToArk() {
+                BK.QQ.shareToArk(0, 'wording', 'http://i.hudongcdn.com/8b4e1c52e5a1b88b42ae510d4a17187c2003_20180326.png', true, 'extendInfo',function (errCode, cmd, data) {
+                    if (errCode == 0) {
+                        BK.Script.log(1, 1," ret:" + data.ret +  // 是否成功 (0:成功，1：不成功)
+                            " aioType:" + data.aioType + // 聊天类型 （1：个人，4：群，5：讨论组，6：热聊）
+                            " gameId:" + data.gameId) // 游戏 id
+                    }
+                });
+            }
+
+            // 上传分数 示例
+            function upScore() {
+                var scoreData = [
+            　　     {
+                        //第一个用户的得分
+            　　         "openId":"4558665DATRGFGFS455",
+            　　         "scoreInfo":{
+                            "score":4455,   //用户得分  必须上报
+                            //附加参数，上报和使用都由第三方决定，最多支持5个附加参数，可选
+                            "a1":1,
+                            "a2":2,
+            　　               },
+            　　          "actInfo":{     //活动数据由第三方配置定义，key值统一用p1,p2,...此数据只用于活动，不会保存到用户的房间数据里, 现支持最多支持16个
+            　　                   "p1":1,    //参数0
+            　　                   "p2":5,    //参数1
+            　　              },
+            　　     },
+                    {
+                        //第二个用户的得分
+            　　         "openId":"SDJIIWJIEQWJ232389DA",
+            　　         "scoreInfo":{
+                            "score":4455,   //用户得分  必须上报
+                            //附加参数，上报和使用都由第三方决定，最多支持5个附加参数，可选
+                            "a1":1,
+                            "a2":2,
+            　　               },
+            　　          "actInfo":{     //活动数据由第三方配置定义，key值统一用p1,p2,...此数据只用于活动，不会保存到用户的房间数据里, 现支持最多支持16个
+            　　                   "p1":1,    //参数0
+            　　                   "p2":5,    //参数1
+            　　              },
+                    }
+                    //第n个用户的得分 ...
+                ];
+
+
+                //735新加，支持各模式玩游戏
+                var arkData = {
+                    /**模式一**/
+                    "pkMode":1,                    //pk模式 1-PVP  2-PVE
+                    "wording":"胜利",             //结果展示wording
+                    "groupInfo":
+                    [
+                        {
+                        "rank":1,                     //组排名，如有并列第一的则两组的rank都是1
+                        "openIds":["4558665DATRGFGFS455","SDJIIWJIEQWJ232389DA"],         //组成员openId
+                        "grpWording":                       //组 wording，可选
+                        [
+                        ["得分","123","分" ],
+                        ["用时","123","秒" ],
+                        ["杀怪","123" ],
+                        ]
+                        }
+                        ]
+                }
+                BK.QQ.scoreUpload(scoreData,function(errCode,cmd,data){
+                    BK.Script.log(0, 0, "scoreUpload ok cmd:" + cmd + " errCode:" + errCode + "  data:" + JSON.stringify(data));
+                    //errCode ，0表示成功其他为异常
+                    //data = {}
+                },arkData);
+            }
+
+            // 获取好友排行榜 demo
+            function getRankList() {
+                BK.QQ.getRankList(function (errCode, cmd, data) {
+                    BK.Script.log(1, 1, "getRankList demo callback  cmd" + cmd + " errCode:" + errCode + "  data:" + JSON.stringify(data));
+                    if(data)
+                    {
+                        var rankList = data.data.rankList;
+                        for(var i=0;i<rankList.length;i++){
+                                var rankNode = rankList[i];
+                            BK.Script.log(1, 1, "rankList i:" + i + 
+                            " nick:" + rankNode.nick +  //昵称
+                            "  head:" + rankNode.head + //头像url
+                            " accPoint:"+rankNode.busData.accPoint) //积分
+                        }
+                    }
+                });
+            }
+
+            function getGameItemList()
+            {
+                BK.QQ.getGameItemList(function(errCode,cmd,data){
+                    BK.Script.log(1, 1, "getGameItemList demo callback  cmd" + cmd + " errCode:" + errCode + "  data:" + JSON.stringify(data));
+                    var itemList = [];
+                    if(data){
+                        if(data.data){
+                            if(data.data.itemList){
+                                data.data.itemList.forEach(function(element) {
+                                    var item = {    
+                                    "id":element.id,               //道具ID 
+                                    "name":element.name,           //道具名称
+                                    "consumed":element.consumed,   //是否消耗型【0-非消耗型 1-消耗型】
+                                    "uinque":element.uinque,       //是否绝版【0-非绝版，1-绝版】
+                                    "iconUrl":element.iconUrl,     //素材iconurl
+                                    "curreInfo":element.curreInfo  //价格数组 因支持多货币，每个元素为某种货币的价格
+                                    //  "curreInfo":[
+                                    //                     {
+                                    //                     "curreType":3,    //3-游戏点券 4-二级货币（暂不能用）
+                                    //                     "price":1000     //价格
+                                    //                     }]    
+                                    }
+                                    itemList.push(item);
+                                    BK.Script.log(0,0,"id ="+ item.id + " name="+item.name+ " consumed="+item.consumed+" unique="+item.uinque+ " iconUrl="+item.iconUrl + " curreInfo="+item.curreInfo) ;   
+                                }, this);
+                            }
+                        }
+                    }
+                })
+            }
+            
+            function uploadScoreWithoutRoom() {
+                var data = {
+                    userData: [
+                        {
+                            openId: GameStatusInfo.openId,
+                            startMs: ((new Date()).getTime() -1).toString(),    // 游戏开始时间。单位为毫秒
+                            endMs: ((new Date()).getTime()).toString(),  // 游戏结束时间。单位为毫秒
+                            scoreInfo: {
+                                score: 100,                      // 分数
+                                // 附加属性，最多 8 个，从 a1 ~ a8，不是必填的
+                                a1: 100,
+                            },
+                        },
+                    ],
+                    // type 描述附加属性的用途
+                    // order 排序的方式，1: 从大到小, 2: 从小到大, 3: 累积
+                    // 如score字段对应，上个属性.
+                    attr: {
+                        score: {   
+                            type: 'rank',
+                            order: 1,
+                        },
+                        a1: {
+                            type: 'rank',
+                            order: 2,
+                        }
+                    },
+                };
+                BK.Script.log(1,1,JSON.stringify(data));
+                // gameMode: 游戏模式，如果没有模式区分，直接填 1
+                BK.QQ.uploadScoreWithoutRoom(1, data, function(errCode, cmd, data) {
+                    // 返回错误码信息
+                    if (errCode !== 0) {
+                        BK.Script.log(1,1,'上传分数失败!错误码：' + errCode);
+                    }
+                });
+
+            }
+
+            function getRankListWithoutRoom() {
+                BK.QQ.getRankListWithoutRoom('score', 1, function(errCode, cmd, data) {
+                    BK.Script.log(1,1,"getRankListWithoutRoom callback  cmd" + cmd + " errCode:" + errCode + "  data:" + JSON.stringify(data));
+
+                    // 返回错误码信息
+                    if (errCode !== 0) {
+                        BK.Script.log(1,1,'获取排行榜数据失败!错误码：' + errCode);
+
+                        return;
+                    }
+
+                    // 解析数据
+                    if (data) {
+                        for(var i=0; i < data.data.ranking_list.length; ++i) {
+                            var rd = data.data.ranking_list[i];
+
+                            // rd 的字段如下:
+                            //var rd = {
+                            //    url: '',            // 头像的 url
+                            //    nick: '',           // 昵称
+                            //    score: 1,           // 分数
+                            //    selfFlag: false,    // 是否是自己
+                            //};
+                        }
+                    }
+
+                    // 再拉 a1 的排行榜
+                    BK.QQ.getRankListWithoutRoom('a1', 1, function(errCode, cmd, data) {
+                        BK.Script.log(1,1,"getRankListWithoutRoom callback  cmd" + cmd + " errCode:" + errCode + "  data:" + JSON.stringify(data));
+
+                        // 返回错误码信息
+                        if (errCode !== 0) {
+                            BK.Script.log(1,1,'获取排行榜数据失败!错误码：' + errCode);
+
+                            return;
+                        }
+
+                        // 解析数据
+                        if (data) {
+                            for(var i=0; i < data.data.ranking_list.length; ++i) {
+                                var rd = data.data.ranking_list[i];
+
+                                /// rd 的字段如下:
+                                //var rd = {
+                                //    url: '',            // 头像的 url
+                                //    nick: '',           // 昵称
+                                //    a1: 1,              // 分数
+                                //    selfFlag: false,    // 是否是自己
+                                //};
+                            }
+                        }
+                    });
+                });
+            }
+
+            function pay(){
+
+                // BK.QQ.qPayPurchase(1,1,[],function(){})
+                
+                BK.MQQ.Webview.openTransparent("https://cmshow.qq.com/apollo/html/game-platform/buy-props.html?adtag=inside_game&gameId=2006&gameOrientation=3&itemList=%5B%7B%22itemId%22%3A2372%2C%22itemNum%22%3A60%7D%5D",1);
+            }
+
+
+            new window.Game(
+                {
+                    // 获得 GameStatusInfo 游戏信息
+                    onLoad: function (app) { 
+                        BK.Script.log(0, 0, "onInitGlobalVar + GameStatusInfo" + JSON.stringify(GameStatusInfo));
+                        openid = GameStatusInfo.openId;
+                        document.getElementById("game_info").innerHTML = JSON.stringify(GameStatusInfo);
+
+                        // getUserName();
+                        // getUserIcon();
+                        // getOpenKey();
+                        // shareToMQQ();
+                        // shareToArk();
+                        // getRankList();
+                        // upScore();
+                        // getGameItemList();
+
+                        // uploadScoreWithoutRoom();
+                        // getRankListWithoutRoom();
+                    }
+                    
+                    // // 点击通用组件分享，这里只需要提供分享数据（主动分享的调用 BK.QQ.shareToArk 和 BK.QQ.shareToMQQ 接口）
+                    // onShare: function (app) { 
+                    //     BK.Script.log(0, 0, "onShare");
+                    //     return{
+                    //             summary:"一起来玩厘米游戏",
+                    //             picUrl:"http://mat1.gtimg.com/ipad/qq_time/imgs/20180321_chunfen.jpg",
+                    //             gameId:GameStatusInfo.gameId,
+                    //             roomId:0,
+                    //             isSelectFriend:1,
+                    //             extendInfo:"a=1&b=2"
+                    //         };
+                    // },
+                }
+            )
+
+            function send(){
+
+                 __browserMsg.send(JSON.stringify(
   {
         business:"pay", //不能修改
         code:1,
@@ -13,16 +312,28 @@
     }
 
   ),'sc.web_callback_game.local');
+
+            }
         </script>
-        <title>测试 Demo</title>
+        <title>厘米 H5 游戏示例 Demo</title>
     </head>
     <body>
-        <p style="font-size:160%;" id="user_name">33333</p>
-        <button style="font-size:160%;" onclick="getUserName()">获取用户名</button>
-        <p style="font-size:160%;" id="user_name">用户名字</p>
+        <p style="font-size:160%;">厘米 H5 游戏示例 Demo</p>
+        <p style="font-size:160%;">游戏信息：</p>
+        <p style="font-size:160%;" id="game_info"></p>
+
+        <p style="font-size:160%;" id="user_name">用户昵称</p>
+        <button style="font-size:160%;" onclick="getUserName()">获取用户昵称</button>
+        <p style="font-size:160%;" id="user_name"></p>
         <button style="font-size:160%;" onclick="getUserIcon()">获取用户头像</button>
         <img id="user_icon" src="index.html">
-      
+        <button style="font-size:160%;" onclick="pay()">点击支付</button>
+        <p style="font-size:160%;" id="user_OpenKey">openKey</p>
+        <button style="font-size:160%;" onclick="getOpenKey()">获取 openKey</button>
+        <button style="font-size:160%;" onclick="send()">点击发送消息</button>
+        <img id="user_icon" src="inviteIcon.png?_gameid=2014">
+        <img id="user_icon" src="test.png?_gameid=2014">
+
 
     </body>
 
