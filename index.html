@@ -266,41 +266,41 @@
             }
 
 
-            new window.Game(
-                {
-                    // 获得 GameStatusInfo 游戏信息
-                    onLoad: function (app) { 
-                        BK.Script.log(0, 0, "onInitGlobalVar + GameStatusInfo" + JSON.stringify(GameStatusInfo));
-                        openid = GameStatusInfo.openId;
-                        document.getElementById("game_info").innerHTML = JSON.stringify(GameStatusInfo);
+//             new window.Game(
+//                 {
+//                     // 获得 GameStatusInfo 游戏信息
+//                     onLoad: function (app) { 
+//                         BK.Script.log(0, 0, "onInitGlobalVar + GameStatusInfo" + JSON.stringify(GameStatusInfo));
+//                         openid = GameStatusInfo.openId;
+//                         document.getElementById("game_info").innerHTML = JSON.stringify(GameStatusInfo);
 
-                        // getUserName();
-                        // getUserIcon();
-                        // getOpenKey();
-                        // shareToMQQ();
-                        // shareToArk();
-                        // getRankList();
-                        // upScore();
-                        // getGameItemList();
+//                         // getUserName();
+//                         // getUserIcon();
+//                         // getOpenKey();
+//                         // shareToMQQ();
+//                         // shareToArk();
+//                         // getRankList();
+//                         // upScore();
+//                         // getGameItemList();
 
-                        // uploadScoreWithoutRoom();
-                        // getRankListWithoutRoom();
-                    }
+//                         // uploadScoreWithoutRoom();
+//                         // getRankListWithoutRoom();
+//                     }
                     
-                    // // 点击通用组件分享，这里只需要提供分享数据（主动分享的调用 BK.QQ.shareToArk 和 BK.QQ.shareToMQQ 接口）
-                    // onShare: function (app) { 
-                    //     BK.Script.log(0, 0, "onShare");
-                    //     return{
-                    //             summary:"一起来玩厘米游戏",
-                    //             picUrl:"http://mat1.gtimg.com/ipad/qq_time/imgs/20180321_chunfen.jpg",
-                    //             gameId:GameStatusInfo.gameId,
-                    //             roomId:0,
-                    //             isSelectFriend:1,
-                    //             extendInfo:"a=1&b=2"
-                    //         };
-                    // },
-                }
-            )
+//                     // // 点击通用组件分享，这里只需要提供分享数据（主动分享的调用 BK.QQ.shareToArk 和 BK.QQ.shareToMQQ 接口）
+//                     // onShare: function (app) { 
+//                     //     BK.Script.log(0, 0, "onShare");
+//                     //     return{
+//                     //             summary:"一起来玩厘米游戏",
+//                     //             picUrl:"http://mat1.gtimg.com/ipad/qq_time/imgs/20180321_chunfen.jpg",
+//                     //             gameId:GameStatusInfo.gameId,
+//                     //             roomId:0,
+//                     //             isSelectFriend:1,
+//                     //             extendInfo:"a=1&b=2"
+//                     //         };
+//                     // },
+//                 }
+//             )
 
             function send(){
 
